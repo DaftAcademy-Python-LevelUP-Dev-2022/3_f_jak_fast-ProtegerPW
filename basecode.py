@@ -12,6 +12,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="jinja_templates")
 security = HTTPBasic()
 
+list_of_paths = []
+
 @app.get("/start", response_class=HTMLResponse)
 async def hello():
     return """
@@ -61,13 +63,11 @@ async def format_param(request:Request, response:Response, format: str | None = 
     else:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return
-    
-list_of_paths = []
 
 @app.put("/save/{file_path:path}")
 def save_put(file_path:str, response:Response):
     if file_path not in list_of_paths:
-        list_of_paths.append(list_of_paths)
+        list_of_paths.append(file_path)
         
     response.status_code = status.HTTP_200_OK
     return
@@ -76,9 +76,10 @@ def save_put(file_path:str, response:Response):
 def save_get(file_path:str, response:Response):
     if file_path in list_of_paths:
         response.status_code = status.HTTP_301_MOVED_PERMANENTLY
-        return RedirectResponse(urls="/info")
+        return RedirectResponse(url="/info", status_code=301)
     else:
         response.status_code = status.HTTP_404_NOT_FOUND
+        return
     
 @app.delete("/save/{file_path:path}")
 def save_delete(file_path:str, response:Response):

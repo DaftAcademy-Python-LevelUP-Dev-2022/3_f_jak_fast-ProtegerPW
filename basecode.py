@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Response, status, Request, Depends, Header, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from fastapi.templating import Jinja2Templates
@@ -61,3 +61,29 @@ async def format_param(request:Request, response:Response, format: str | None = 
     else:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return
+    
+list_of_paths = []
+
+@app.put("/save/{file_path:path}")
+def save_put(file_path:str, response:Response):
+    if file_path not in list_of_paths:
+        list_of_paths.append(list_of_paths)
+        
+    response.status_code = status.HTTP_200_OK
+    return
+
+@app.get("/save/{file_path:path}")
+def save_get(file_path:str, response:Response):
+    if file_path in list_of_paths:
+        response.status_code = status.HTTP_301_MOVED_PERMANENTLY
+        return RedirectResponse(urls="/info")
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+    
+@app.delete("/save/{file_path:path}")
+def save_delete(file_path:str, response:Response):
+    if file_path in list_of_paths:
+        list_of_paths.remove(file_path)
+    
+    response.status_code = status.HTTP_200_OK
+    return

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, status, Request, Depends, Header
+from fastapi import FastAPI, Response, status, Request, Depends, Header, Query
 from fastapi.responses import HTMLResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
@@ -50,12 +50,12 @@ def check_age(request: Request, response: Response, credentials: HTTPBasicCreden
     
     
 @app.get("/info")
-async def format_param(request:Request, response:Response, user_agent: str | None = Header(default=None)):
-    request_json = await request.json()
+async def format_param(request:Request, response:Response, format: str | None = Query(default=None), user_agent: str | None = Header(default=None)):
+    # request_json = await request.json()
     
-    if request_json["format"] == "json":
+    if format == "json":
         return {"user_agent": user_agent}
-    elif request_json["format"] == "html":
+    elif format == "html":
         return templates.TemplateResponse("user_agent.html.j2", {
             "request": request, "user_agent": user_agent})
     else:
